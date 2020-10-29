@@ -46,17 +46,7 @@ client.on("message", message => {
 
   if (message.author.bot) return;
 
-  db[message.author.id].xp++;
-  let userInfo = db[message.author.id];
-  if (userInfo.xp > (userInfo.level * 0.9) * 10) {
-    userInfo.level++
-    userInfo.xp = 0
-    message.reply(`GG!, You have leveled up to level ${db[message.author.id].level}`)
 
-  fs.writeFile("./database.json", JSON.stringify(db), (x) => {
-    if (x) console.error(x)
-  });
-  }
 
   if (message.channel.id === "762147921520492544") {
     message.react('✅').then(() => {
@@ -97,6 +87,8 @@ client.on("message", message => {
       client.commands.get('help').execute(message, args);
     }
 
+    let userInfo = db[message.author.id];
+
     if (command === 'daily') {
 
       client.commands.get('daily').execute(message, talkedRecently, db);
@@ -108,8 +100,18 @@ client.on("message", message => {
     }
   }
 
+  db[message.author.id].xp++;
 
-  
+  if (userInfo.xp > userInfo.level * 2) {
+    userInfo.level++
+    userInfo.xp = 0
+    message.reply(`GG!, You have leveled up to level: ${db[message.author.id].level}`)
+
+    fs.writeFile("./database.json", JSON.stringify(db), (x) => {
+      if (x) console.error(x)
+    });
+  }
+
 
 
 });
